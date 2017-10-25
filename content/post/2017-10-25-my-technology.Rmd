@@ -1,0 +1,111 @@
+---
+title: My Technology
+author: Brad Roberts
+date: '2017-10-25'
+slug: my-technology
+categories: []
+tags: []
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction to R Markdown and Notebook
+
+This is a short demo on how to use an R Markdown Notebook. Within R Markdown, we can create output files as HTML (interactive), PDF, and Word documents of R code and the results of the R code. The [Notebook](http://rmarkdown.rstudio.com/lesson-10.html) part of R Markdown allows individual "code chunks" to run. This is very beneficial when learning how to write R code and perform data analysis - effectively allowing the user to immediately see what was created and/or follow along with the instructor.  
+
+Whether it is in the classroom or with recording software such as [Screenflow](https://www.telestream.net/screenflow/), this type of functionality encourages hands-on learning. With a couple of modifications, we can easily create a slide [presentation](http://rmarkdown.rstudio.com/gallery.html) in HTML or PDF format as well. The real benefit of creating slides within the stats environment/software is that figures can easily be embedded into the presentation and maintain any functionality of the interactivity of the figures (more to come). 
+
+Moreover, everything created within R can be shared easily within [Github](https://github.com/). Without going into too many details, code can also be automated to be graded by the instructor in both R Notebook, as well as [Jupyter](http://jupyter.org) Notebook through GitHub. As an entire ecosystem, R is quite powerful for sharing, collaboration, reproducibility, and education.
+
+Both R and Jupyter Notebooks allow R, Python, and other types of programming langauges to be run within one environment. For this example, we will only focus on R within R Markdown. 
+
+## Introduction to ggplot2
+
+We will use [ggplot2](http://github.com/hadley/ggplot2) to make a couple of figures to demonstrate the power of R Markdown.
+
+We need to first make sure that we have `ggplot2` and its dependencies installed, using the `install.packages` function.
+
+Now that we have it installed, we can get started by loading it into our workspace.
+
+```{r}
+library(ggplot2)
+```
+
+We are now fully set to try and create some amazing plots. 
+
+#### Data
+
+We will use the well-known [iris](http://stat.ethz.ch/R-manual/R-patched/library/datasets/html/iris.html) dataset. 
+
+```{r}
+# We can insert comments into the code using the #. 
+# head shows us the first several rows of our data
+head(iris)
+```
+
+#### Simple Plot
+
+Let us create a simple scatterplot of `Sepal.Length` with `Petal.Length`. For the fun of it, we will also add some interactivity to our figure for the HTML example using [plotly](https://plot.ly/). We will need to install the `plotly` package and load it up.
+
+```{r warning=FALSE, message=FALSE}
+# install plotly and load the library
+library(plotly)
+```
+
+We simply need to save the `ggplot2` object by creating some type of name, `plot1` for instance, and then convert the `ggplot2` object to `plotly` using `ggplotly`.
+
+```{r}
+plot1 <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point()
+
+# interactive plot
+ggplotly(plot1)
+```
+And we have an interactive plot!
+
+The basic idea in `ggplot2` is to map different plot aesthetics to variables in the dataset. In this plot, we map the x-axis to the variable `Sepal.Length` and the y-axis to the variable `Petal.Length`. 
+
+You can now hover over the points to see what the values are for each point. A menu will also appear to allow zooming in/out, brushing (highlighting the points), and other options.
+
+#### Add Color
+
+Now suppose, we want to color the points based on the `Species`. `ggplot2` makes it really easy, since all you need to do is map the aesthetic `color` to the variable `Species`.
+
+```{r}
+library(ggplot2)
+library(plotly)
+plot2 <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point(aes(color = Species))
+
+# Let's make this fun again and add some interactivity
+ggplotly(plot2)
+```
+
+Note that I could have included the color mapping right inside the `ggplot` line, in which case this mapping would have been applicable globally through all layers. If that doesn't make any sense to you right now, don't worry, as we will get there by the end of this tutorial.
+
+#### Add Line
+
+We are interested in the relationship between `Petal.Length` and `Sepal.Length`. So, let us fit a regression line through the scatterplot. Now, before you start thinking you need to run a `lm` command and gather the predictions using `predict`, I will ask you to stop right there and read the next line of code.
+
+```{r}
+p3 <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point() + 
+  geom_smooth(method = 'lm', se = F)
+print(p3)
+```
+
+
+You can extend this idea further and have a regression line plotted for each `Species`. 
+
+```{r}
+p4 <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point() + 
+  geom_smooth(method = 'lm', se = FALSE)
+print(p4)
+```
+
+The `geom_smooth` command plots the regression lines for you, and in this case, we were going for a linear model or `lm`. The `se = FALSE` tells `ggplot2` that we do not want any standard errors shown.
+
+### And there you have it - an introduction to R Markdown/Notebook, as well as the powerful plotting package, `ggplot2`.
