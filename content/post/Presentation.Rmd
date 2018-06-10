@@ -1,0 +1,238 @@
+---
+title: "Evaluation of Word Embeddings for Chronic Pain Patient Notes"
+author: "Bradley Roberts"
+date: "July 27, 2018"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+# Background
+
+An unprecedented amount of patient health information is stored in electronic format.
+
+- Great potential for improving all aspects of patient care including:
+
+   - Safety
+   
+   - Effectiveness
+   
+   - Patient-centeredness
+   
+   - Communication
+   
+   - Education
+   
+   - Timeliness
+   
+   - Efficiency
+   
+   - Equity [1]
+
+---
+
+# Background
+
+The electronic format is not fully optimized for clinicians' workflow and has introduced several barriers:
+
+- Difficulty searching for patient data
+
+- Poor readability
+
+- Redundancy [2]
+
+- Reduced efficiency
+
+- Increased clerical burden
+
+- Increased risk of physician burnout [3]
+
+---
+
+# Purpose of Study
+
+1. Using chronic pain patient notes, the purpose of this study is to identify an appropriate word embeddings model that will capture semantic and syntactic content of the patient note for downstream applications such as automated text summarization and simplification.  
+
+2. The secondary purpose of this study is to explore the content within a patient note to identify ways to create and/or enhance a narrative important to understanding patient disease trajectory and outcomes.
+
+---
+
+# Methods: Sample
+
+- Secondary data analysis of patient notes between October 1, 2015 and March 31, 2018
+
+- Chronic pain patients 21 years and older with non-malignant chronic pain
+    - Pain lasting more than three months
+    
+    - Other treatment strategies in primary care have failed
+    
+- Patients disbursed across six different pain management clinics in Michigan
+    - Michigan Pain Consultants
+    
+    - 14 providers specializing in interventional pain management
+
+---
+
+# Methods: Word Embeddings
+
+You shall know a word by the company it keeps... (Firth, 1957)
+
+<br />
+- In simplistic terms, word embeddings transform words into numbers
+
+- First step (layer) in deep neural networks
+
+- Word embeddings are commonly divided between 
+    1. Co-occurrence models
+    
+    2. Prediction models
+    
+---
+
+# Methods: Word Embeddings
+
+1. Co-occurrence models
+    - Based on words frequently appearing together
+    
+    - Global Vectors (GloVe)
+    
+2. Prediction models
+    - Predicts context (i.e., surrounding) word or target word
+
+    - Word2vec - n-grams
+    
+    - fastText - characters
+
+---
+
+# Methods: Word Embeddings
+
+Many parameters to consider for each of the models:
+
+- Dimension size (e.g., 50, 300, 1000)
+
+- Window size (e.g., 5, 8, 10)
+
+- Negative sampling (e.g., 5, 10)
+
+- Epochs (e.g., 10, 25, 50)
+
+- Minimum word counts (e.g., 2, 5, 50)
+
+???
+
+Dimension - how many numbers represent a word
+Window size - how many words to consider to the left and right of a target word
+Negative sampling - modifies just a small percentage of the weights instead of for all words
+Epochs - iterations
+
+---
+
+# A Working Example of GloVe
+
+Designing figure with example from patient note - important
+
+---
+
+# A Working Example of Word2vec & fastText
+
+Designing figure with example from patient note - important
+
+---
+
+# Methods: Word Embeddings
+
+Based on a priori testing, the following parameters were chosen for each of the three models:
+
+- Dimension size: 50, 200 (100 and 300 were also tested)
+
+- Window size: 10 (5 was also tested)
+
+- Negative sampling: 5
+
+- Epochs: 50
+
+- Minimum word count: 5
+ 
+???
+
+Replace this with figure and only mention other testing
+
+Each model took between 20 minutes and 14 hours to run with over 30 models created. The models with the parameters above were retained for intrinsic and extrinsic evaluation.
+
+---
+
+# Methods: Intrinsic Evaluation
+
+Semantic relatedness and semantic similarity of words
+
+1. Cosine similarity
+    - king:queen::man:woman
+    
+    - perfect: perfection, perfectly, ideal, flawless, good, always
+    
+2. Word clustering (similar words in close proximity grouped together)
+    - t-distributed stochastic neighbor embedding (t-SNE) + principal components analysis (PCA)
+        - Collapses many dimensions (200) down to 2
+            
+    - k-nearest neighbors (KNN) with Louvain community detection (similar to network analysis)
+        - Groups similar words
+
+---
+
+# Methods: Extrinsic Evaluation
+
+No good domain-specific (chronic pain), health care ontologies exist for evaluation; however, downstream applications for word embeddings aim to simplify the patient note.
+
+- Predict text readability 
+    - Flesch Kincaid Grade
+        
+    - Gunning Fog Index
+        
+    - SMOG Readability Formula
+    
+- Convolution neural network (CNN) to predict the grade level of the patient note
+    - 150 epochs
+    
+    - Training: 70%; Validation: 30%
+
+???
+
+Flesch Kincaid Grade - Average number of words per sentence, number of syllables per word
+Gunning Fog  - Average number of words per sentence, percentage of words with more than two syllables
+SMOG - Number of words with more than two syllables
+
+---
+
+CNNs... we won't go into these.
+
+<img src="images/cnn2.png" width="650">
+
+---
+
+# Results
+
+---
+
+<a href="http://www.statimpact.org/WordExplorer">WordExplorer</a>
+
+---
+
+
+# References
+
+[1] “Benefits of EHRs.” HealthIT.gov website. Available at: https://www.healthit.gov/providersprofessionals/benefits-electronic-health-records-ehrs.
+Accessed March 19, 2018.
+
+[2] Farri, O., Pieckiewicz, D. S., Rahman, A. S., Adam, T. J., Pakhomov, S. V., & Melton, G.
+B. (2012). A qualitative analysis of EHR clinical document synthesis by clinicians. AMIA ... Annual Symposium proceedings / AMIA Symposium. AMIA Symposium, 2012, 1211- 1220.     
+
+[3] Shanafelt, T., Dyrbye, L., Sinsky, C., Hasan, O., Satele, D., Sloan, J., & West, C. (2016). Relationship Between Clerical Burden and Characteristics of the Electronic Environment With Physician Burnout and Professional Satisfaction. Mayo Clinic Proceedings, 91(7), pp.836-848.
